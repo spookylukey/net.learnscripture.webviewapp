@@ -4,6 +4,9 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.WebChromeClient;
@@ -56,8 +59,12 @@ public class Dashboard extends Activity {
 		engine.loadUrl("http://learnscripture.net/");
 	}
 
+	private WebView getEngine() {
+		return (WebView) findViewById(R.id.web_engine);
+	}
+
 	public void onBackPressed() {
-		WebView engine = (WebView) findViewById(R.id.web_engine);
+		WebView engine = getEngine();
 		String url = engine.getUrl(); 
 		if (url.equals("http://learnscripture.net/") ||
 				url.equals("http://learnscripture.net/dashboard/") ||
@@ -67,6 +74,28 @@ public class Dashboard extends Activity {
 		} else {
 			// go back a page, like normal browser
 			engine.goBack();
+		}
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.main_menu, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle item selection
+		switch (item.getItemId()) {
+		case R.id.dashboard_menuitem:
+			getEngine().loadUrl("http://learnscripture.net/dashboard/");
+			return true;
+		case R.id.refresh_menuitem:
+			getEngine().reload();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
 		}
 	}
 
