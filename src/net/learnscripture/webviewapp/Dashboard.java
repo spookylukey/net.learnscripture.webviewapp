@@ -60,7 +60,8 @@ public class Dashboard extends Activity {
 		WebView engine = (WebView) findViewById(R.id.web_engine);
 		String url = engine.getUrl(); 
 		if (url.equals("http://learnscripture.net/") ||
-			url.equals("http://learnscripture.net/dashboard/")) {
+				url.equals("http://learnscripture.net/dashboard/") ||
+				!engine.canGoBack()) {
 			// exit
 			super.onBackPressed();
 		} else {
