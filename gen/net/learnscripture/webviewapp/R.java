@@ -27,6 +27,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
     public static final class id {
         public static final int dashboard_menuitem=0x7f080003;
         public static final int fullscreen_content_controls=0x7f080000;
+        public static final int preferences_menuitem=0x7f080005;
         public static final int progressbar=0x7f080001;
         public static final int refresh_menuitem=0x7f080004;
         public static final int web_engine=0x7f080002;
