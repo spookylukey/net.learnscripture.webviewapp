@@ -25,6 +25,8 @@ public class Dashboard extends Activity {
 	public String BASE_URL = "http://learnscripture.net/";
 	public String DASHBOARD_URL = BASE_URL + "dashboard/";
 
+	public boolean enablePreferencesMenu = false;
+
 	@SuppressLint("SetJavaScriptEnabled") @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -48,6 +50,7 @@ public class Dashboard extends Activity {
 		engine.setWebViewClient(new FixedWebViewClient() {
 			public void onPageStarted(WebView view, String url, Bitmap favicon)
 			{
+				enablePreferencesMenu  = false;
 				progressBar.setVisibility(View.VISIBLE);
 			}
 
@@ -57,6 +60,7 @@ public class Dashboard extends Activity {
 			}
 		});
 		engine.getSettings().setJavaScriptEnabled(true);
+		engine.addJavascriptInterface(new IJavascriptHandler(this), "androidlearnscripture");
 		engine.loadUrl(BASE_URL);
 	}
 
@@ -86,6 +90,16 @@ public class Dashboard extends Activity {
 	}
 
 	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		MenuItem prefs = menu.findItem(R.id.preferences_menuitem);
+		if (prefs != null) {
+			prefs.setVisible(enablePreferencesMenu);
+		}
+		super.onPrepareOptionsMenu(menu);
+		return true;
+	}
+
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle item selection
 		switch (item.getItemId()) {
@@ -107,6 +121,19 @@ public class Dashboard extends Activity {
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
 			view.loadUrl(url);
 			return true;
+		}
+	}
+
+	final class IJavascriptHandler {
+		private Dashboard activity;
+
+		IJavascriptHandler(Dashboard activity) {
+			this.activity = activity;
+		}
+
+		public void setEnablePreferencesMenu() {
+			// this is called from JS with passed value
+			activity.enablePreferencesMenu = true;
 		}
 	}
 
