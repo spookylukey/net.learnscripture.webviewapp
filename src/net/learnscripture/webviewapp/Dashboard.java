@@ -22,6 +22,8 @@ import android.widget.ProgressBar;
  */
 public class Dashboard extends Activity {
 
+	public String BASE_URL = "http://learnscripture.net/";
+	public String DASHBOARD_URL = BASE_URL + "dashboard/";
 
 	@SuppressLint("SetJavaScriptEnabled") @Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +57,7 @@ public class Dashboard extends Activity {
 			}
 		});
 		engine.getSettings().setJavaScriptEnabled(true);
-
-		engine.loadUrl("http://learnscripture.net/");
+		engine.loadUrl(BASE_URL);
 	}
 
 	private WebView getEngine() {
@@ -66,8 +67,8 @@ public class Dashboard extends Activity {
 	public void onBackPressed() {
 		WebView engine = getEngine();
 		String url = engine.getUrl(); 
-		if (url.equals("http://learnscripture.net/") ||
-				url.equals("http://learnscripture.net/dashboard/") ||
+		if (url.equals(BASE_URL) ||
+				url.equals(DASHBOARD_URL) ||
 				!engine.canGoBack()) {
 			// exit
 			super.onBackPressed();
@@ -89,7 +90,7 @@ public class Dashboard extends Activity {
 		// Handle item selection
 		switch (item.getItemId()) {
 		case R.id.dashboard_menuitem:
-			getEngine().loadUrl("http://learnscripture.net/dashboard/");
+			getEngine().loadUrl(DASHBOARD_URL);
 			return true;
 		case R.id.refresh_menuitem:
 			getEngine().reload();
