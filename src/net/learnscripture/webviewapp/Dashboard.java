@@ -95,7 +95,7 @@ public class Dashboard extends Activity {
 			getEngine().reload();
 			return true;
 		case R.id.preferences_menuitem:
-			getEngine().loadUrl("javascript: $('.preferences-link').click()");
+			getEngine().loadUrl("javascript: learnscripture.showPreferences()");
 		default:
 			return super.onOptionsItemSelected(item);
 		}
