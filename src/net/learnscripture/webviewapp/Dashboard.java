@@ -26,6 +26,7 @@ public class Dashboard extends Activity {
 	public String DASHBOARD_URL = BASE_URL + "dashboard/";
 
 	public boolean enablePreferencesMenu = false;
+	public boolean modalIsVisible = false;
 
 	@SuppressLint("SetJavaScriptEnabled") @Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +52,7 @@ public class Dashboard extends Activity {
 			public void onPageStarted(WebView view, String url, Bitmap favicon)
 			{
 				enablePreferencesMenu  = false;
+				modalIsVisible = false;
 				progressBar.setVisibility(View.VISIBLE);
 			}
 
@@ -71,7 +73,9 @@ public class Dashboard extends Activity {
 	public void onBackPressed() {
 		WebView engine = getEngine();
 		String url = engine.getUrl(); 
-		if (url.equals(BASE_URL) ||
+		if (modalIsVisible) {
+			engine.loadUrl("javascript: learnscripture.hideModal();");
+		} else if (url.equals(BASE_URL) ||
 				url.equals(DASHBOARD_URL) ||
 				!engine.canGoBack()) {
 			// exit
@@ -124,6 +128,7 @@ public class Dashboard extends Activity {
 		}
 	}
 
+	// The method of IJavascriptHandler are called from javascript
 	final class IJavascriptHandler {
 		private Dashboard activity;
 
@@ -132,8 +137,11 @@ public class Dashboard extends Activity {
 		}
 
 		public void setEnablePreferencesMenu() {
-			// this is called from JS with passed value
 			activity.enablePreferencesMenu = true;
+		}
+
+		public void setModalIsVisible(boolean visible) {
+			activity.modalIsVisible  = visible;
 		}
 	}
 
