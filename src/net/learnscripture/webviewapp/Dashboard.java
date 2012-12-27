@@ -1,7 +1,5 @@
 package net.learnscripture.webviewapp;
 
-import java.net.URISyntaxException;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
