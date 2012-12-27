@@ -1,8 +1,13 @@
 package net.learnscripture.webviewapp;
 
+import java.net.URISyntaxException;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.MailTo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -123,8 +128,25 @@ public class Dashboard extends Activity {
 	private class FixedWebViewClient extends WebViewClient {
 		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
-			view.loadUrl(url);
-			return true;
+			if (url.startsWith(BASE_URL) || url.startsWith("javascript:")) {
+				return false;
+			} else if (url.startsWith("mailto:")) {
+				MailTo mt = MailTo.parse(url);
+				Intent i = new Intent(Intent.ACTION_SEND);
+				i.setType("message/rfc822");
+				i.putExtra(Intent.EXTRA_EMAIL, new String[]{mt.getTo()});
+				i.putExtra(Intent.EXTRA_SUBJECT, mt.getSubject());
+				i.putExtra(Intent.EXTRA_CC, mt.getCc());
+				i.putExtra(Intent.EXTRA_TEXT, mt.getBody());
+				view.getContext().startActivity(i);
+				view.reload();
+				return true;
+			} else {
+				// We want to give user the choice of which browser, if appropriate
+				Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+				view.getContext().startActivity(i);
+				return true;
+			}
 		}
 	}
 
