@@ -23,21 +23,17 @@ The app provides the following refinements/features:
 
   * when a "modal dialog" is active within the WebView, the back button will
     dismiss it, rather than do a page back. This requires integration with
-    javascript in the web app, firstly to expose a javascript method that will
-    close the modal, so the Android app can do::
+    javascript in the web app:
 
-      engine.loadUrl("javascript: learnscripture.hideModal();");
+    First, you must expose a javascript method that will close the modal. In
+    this case it is called ``learnscripture.hideModal``. The Java code calls the
+    javascript defined by the page using ``engine.loadUrl("javascript:...")``.
 
-    … and secondly to let the Android app know that a modal is active. In the
-    Android app, you have this method::
+    Second, you must let the Android app know that a modal is active. This is
+    done by javascript calling Java code, which is enabled by the
+    ``engine.addJavascriptInterface`` call.
 
-      IJavascriptHandler.setModalIsVisible(boolean visible)
-
-    and this call to expose IJavascriptHandler to the web page::
-
-      engine.addJavascriptInterface(new IJavascriptHandler(this), "androidlearnscripture");
-
-    In the javascript, you have code like::
+    In the javascript, you need code like::
 
       $('div.modal').bind('shown', function (ev) {
           if (window.androidlearnscripture &&
@@ -47,9 +43,9 @@ The app provides the following refinements/features:
       });
 
     and similar code for when the modals disappear. (This is using jQuery and
-    the modal dialogs from Twitter's Bootstrap). The code checks for the
+    the modal dialogs from Twitter's Bootstrap v1.4). The code checks for the
     presence of the "androidlearnscripture" object since the site might not be
-    running withing the Android app, or might be running in a different version
+    running within the Android app, or might be running in a different version
     of the app.
 
 * handling of links:
@@ -57,7 +53,7 @@ The app provides the following refinements/features:
   * Links internal to the LearnScripture.net site are loaded within the WebView
 
   * External http links are loaded in a separate activity (to show the address
-    bar etc and to make use of any existing sessions the user may have on other
+    bar etc. and to make use of any existing sessions the user may have on other
     sites in their normal browser)
 
   * mailto links handled correctly
@@ -66,7 +62,11 @@ The app provides the following refinements/features:
 
   * Refresh button
 
-  * Home button
+  * Two buttons that provide shortcuts to pages:
+
+    * Dashboard
+
+    * Contact
 
   * Preferences button. This launches a modal within the WebView, and requires
     integration with web site javascript code so that the button is only
