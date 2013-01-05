@@ -29,6 +29,7 @@ public class Dashboard extends Activity {
 
 	public String BASE_URL = "http://learnscripture.net/";
 	public String DASHBOARD_URL = BASE_URL + "dashboard/";
+	public String CONTACT_URL = BASE_URL + "contact/";
 
 	private JavascriptInterface jsInterface;
 	
@@ -127,6 +128,10 @@ public class Dashboard extends Activity {
 			return true;
 		case R.id.preferences_menuitem:
 			getEngine().loadUrl("javascript: learnscripture.showPreferences()");
+			return true;
+		case R.id.contact_menuitem:
+			getEngine().loadUrl(CONTACT_URL);
+			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}

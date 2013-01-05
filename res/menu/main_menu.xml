@@ -3,4 +3,5 @@
     <item android:id="@+id/dashboard_menuitem" android:title="Dashboard"></item>
     <item android:id="@+id/refresh_menuitem" android:title="Refresh"></item>
     <item android:id="@+id/preferences_menuitem" android:title="Preferences"></item>
+    <item android:id="@+id/contact_menuitem" android:title="Contact"></item>
 </menu>
