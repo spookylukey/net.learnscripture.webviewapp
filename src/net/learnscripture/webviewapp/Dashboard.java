@@ -19,12 +19,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
-/**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
- *
- * @see SystemUiHider
- */
 public class Dashboard extends Activity {
 
 	public String BASE_URL = "http://learnscripture.net/";
@@ -32,8 +26,9 @@ public class Dashboard extends Activity {
 	public String CONTACT_URL = BASE_URL + "contact/";
 
 	private JavascriptInterface jsInterface;
-	
-	@SuppressLint("SetJavaScriptEnabled") @Override
+
+	@SuppressLint("SetJavaScriptEnabled")
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_dashboard);
@@ -43,7 +38,7 @@ public class Dashboard extends Activity {
 
 		// Progress bar.
 		// With full screen app, window progress bar (FEATURE_PROGRESS) doesn't seem to show,
-		// so we add an explicit one.
+		// so we use an explicitly created one.
 		final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressbar);
 
 		engine.setWebChromeClient(new WebChromeClient() {
@@ -69,12 +64,12 @@ public class Dashboard extends Activity {
 		engine.getSettings().setJavaScriptEnabled(true);
 		jsInterface = new JavascriptInterface();
 		try {
-		    ComponentName comp = new ComponentName(this, Dashboard.class);
-		    PackageInfo pinfo = getPackageManager().getPackageInfo(comp.getPackageName(), 0);
+			ComponentName comp = new ComponentName(this, Dashboard.class);
+			PackageInfo pinfo = getPackageManager().getPackageInfo(comp.getPackageName(), 0);
 			jsInterface.versionCode = pinfo.versionCode;
 		} catch(android.content.pm.PackageManager.NameNotFoundException e) {
 		}
-		
+
 		engine.addJavascriptInterface(jsInterface, "androidlearnscripture");
 		engine.loadUrl(BASE_URL);
 	}
@@ -141,6 +136,7 @@ public class Dashboard extends Activity {
 		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
 			if (url.startsWith(BASE_URL) || url.startsWith("javascript:")) {
+				// handle by the WebView
 				return false;
 			} else if (url.startsWith("mailto:")) {
 				MailTo mt = MailTo.parse(url);
@@ -154,7 +150,7 @@ public class Dashboard extends Activity {
 				view.reload();
 				return true;
 			} else {
-				// We want to give user the choice of which browser, if appropriate
+				// Use external browser for anything not on this site
 				Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
 				view.getContext().startActivity(i);
 				return true;
@@ -162,12 +158,12 @@ public class Dashboard extends Activity {
 		}
 	}
 
-	// The method of IJavascriptHandler are called from javascript
+	// The methods of JavascriptInterface are called from javascript
 	final class JavascriptInterface {
 		public boolean enablePreferencesMenu = false;
 		public boolean modalIsVisible = false;
 		public int versionCode = 0;
-		
+
 		public void setEnablePreferencesMenu() {
 			enablePreferencesMenu = true;
 		}
@@ -175,7 +171,9 @@ public class Dashboard extends Activity {
 		public void setModalIsVisible(boolean visible) {
 			modalIsVisible = visible;
 		}
-		
+
+		// This is useful for allowing the web site to be able to detect
+		// old app versions and prompt the user to upgrade.
 		public int getVersionCode() {
 			return versionCode;
 		}
