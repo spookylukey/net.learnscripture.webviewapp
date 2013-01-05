@@ -2,7 +2,9 @@ package net.learnscripture.webviewapp;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.graphics.Bitmap;
 import android.net.MailTo;
 import android.net.Uri;
@@ -65,6 +67,13 @@ public class Dashboard extends Activity {
 		});
 		engine.getSettings().setJavaScriptEnabled(true);
 		jsInterface = new JavascriptInterface();
+		try {
+		    ComponentName comp = new ComponentName(this, Dashboard.class);
+		    PackageInfo pinfo = getPackageManager().getPackageInfo(comp.getPackageName(), 0);
+			jsInterface.versionCode = pinfo.versionCode;
+		} catch(android.content.pm.PackageManager.NameNotFoundException e) {
+		}
+		
 		engine.addJavascriptInterface(jsInterface, "androidlearnscripture");
 		engine.loadUrl(BASE_URL);
 	}
@@ -152,6 +161,7 @@ public class Dashboard extends Activity {
 	final class JavascriptInterface {
 		public boolean enablePreferencesMenu = false;
 		public boolean modalIsVisible = false;
+		public int versionCode = 0;
 		
 		public void setEnablePreferencesMenu() {
 			enablePreferencesMenu = true;
@@ -159,6 +169,10 @@ public class Dashboard extends Activity {
 
 		public void setModalIsVisible(boolean visible) {
 			modalIsVisible = visible;
+		}
+		
+		public int getVersionCode() {
+			return versionCode;
 		}
 	}
 
