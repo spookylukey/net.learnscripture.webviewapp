@@ -28,9 +28,8 @@ public class Dashboard extends Activity {
 	public String BASE_URL = "http://learnscripture.net/";
 	public String DASHBOARD_URL = BASE_URL + "dashboard/";
 
-	public boolean enablePreferencesMenu = false;
-	public boolean modalIsVisible = false;
-
+	private JavascriptInterface jsInterface;
+	
 	@SuppressLint("SetJavaScriptEnabled") @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -54,8 +53,8 @@ public class Dashboard extends Activity {
 		engine.setWebViewClient(new FixedWebViewClient() {
 			public void onPageStarted(WebView view, String url, Bitmap favicon)
 			{
-				enablePreferencesMenu  = false;
-				modalIsVisible = false;
+				jsInterface.enablePreferencesMenu  = false;
+				jsInterface.modalIsVisible = false;
 				progressBar.setVisibility(View.VISIBLE);
 			}
 
@@ -65,7 +64,8 @@ public class Dashboard extends Activity {
 			}
 		});
 		engine.getSettings().setJavaScriptEnabled(true);
-		engine.addJavascriptInterface(new IJavascriptHandler(this), "androidlearnscripture");
+		jsInterface = new JavascriptInterface();
+		engine.addJavascriptInterface(jsInterface, "androidlearnscripture");
 		engine.loadUrl(BASE_URL);
 	}
 
@@ -76,7 +76,7 @@ public class Dashboard extends Activity {
 	public void onBackPressed() {
 		WebView engine = getEngine();
 		String url = engine.getUrl(); 
-		if (modalIsVisible) {
+		if (jsInterface.modalIsVisible) {
 			engine.loadUrl("javascript: learnscripture.hideModal();");
 		} else if (url.equals(BASE_URL) ||
 				url.equals(DASHBOARD_URL) ||
@@ -100,7 +100,7 @@ public class Dashboard extends Activity {
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		MenuItem prefs = menu.findItem(R.id.preferences_menuitem);
 		if (prefs != null) {
-			prefs.setVisible(enablePreferencesMenu);
+			prefs.setVisible(jsInterface.enablePreferencesMenu);
 		}
 		super.onPrepareOptionsMenu(menu);
 		return true;
@@ -149,19 +149,16 @@ public class Dashboard extends Activity {
 	}
 
 	// The method of IJavascriptHandler are called from javascript
-	final class IJavascriptHandler {
-		private Dashboard activity;
-
-		IJavascriptHandler(Dashboard activity) {
-			this.activity = activity;
-		}
-
+	final class JavascriptInterface {
+		public boolean enablePreferencesMenu = false;
+		public boolean modalIsVisible = false;
+		
 		public void setEnablePreferencesMenu() {
-			activity.enablePreferencesMenu = true;
+			enablePreferencesMenu = true;
 		}
 
 		public void setModalIsVisible(boolean visible) {
-			activity.modalIsVisible  = visible;
+			modalIsVisible = visible;
 		}
 	}
 
