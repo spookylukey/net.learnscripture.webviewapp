@@ -86,9 +86,10 @@ public class Dashboard extends Activity {
 		String url = engine.getUrl(); 
 		if (jsInterface.modalIsVisible) {
 			engine.loadUrl("javascript: learnscripture.hideModal();");
-		} else if (url.equals(BASE_URL) ||
+		} else if (url != null && (
+				url.equals(BASE_URL) ||
 				url.equals(DASHBOARD_URL) ||
-				!engine.canGoBack()) {
+				!engine.canGoBack())) {
 			// exit
 			super.onBackPressed();
 		} else {
