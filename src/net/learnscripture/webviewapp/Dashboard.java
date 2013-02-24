@@ -9,7 +9,6 @@ import android.graphics.Bitmap;
 import android.net.MailTo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.ClipboardManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -131,12 +130,15 @@ public class Dashboard extends Activity {
 		case R.id.contact_menuitem:
 			getEngine().loadUrl(CONTACT_URL);
 			return true;
-		case R.id.copy_url_menuitem:
+		case R.id.share_url_menuitem:
 			final String url = (jsInterface.urlForSharing != null
 								? jsInterface.urlForSharing
 								: getEngine().getUrl());
-			((ClipboardManager) getSystemService(CLIPBOARD_SERVICE)).setText(url);
-			Toast.makeText(getApplicationContext(), "Page address copied", Toast.LENGTH_SHORT).show();
+			Intent i = new Intent(Intent.ACTION_SEND);
+			i.setType("text/plain");
+			i.putExtra(Intent.EXTRA_SUBJECT, "LearnScripture URL");
+			i.putExtra(Intent.EXTRA_TEXT, url);
+			startActivity(Intent.createChooser(i, "Share URL"));
 		default:
 			return super.onOptionsItemSelected(item);
 		}
