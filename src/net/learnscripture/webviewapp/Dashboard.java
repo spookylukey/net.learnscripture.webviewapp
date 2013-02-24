@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.net.MailTo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.ClipboardManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -18,7 +19,9 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
+@SuppressWarnings("deprecation")
 public class Dashboard extends Activity {
 
 	public String BASE_URL = "http://learnscripture.net/";
@@ -53,6 +56,7 @@ public class Dashboard extends Activity {
 			{
 				jsInterface.enablePreferencesMenu  = false;
 				jsInterface.modalIsVisible = false;
+				jsInterface.urlForSharing = null;
 				progressBar.setVisibility(View.VISIBLE);
 			}
 
@@ -127,6 +131,12 @@ public class Dashboard extends Activity {
 		case R.id.contact_menuitem:
 			getEngine().loadUrl(CONTACT_URL);
 			return true;
+		case R.id.copy_url_menuitem:
+			final String url = (jsInterface.urlForSharing != null
+								? jsInterface.urlForSharing
+								: getEngine().getUrl());
+			((ClipboardManager) getSystemService(CLIPBOARD_SERVICE)).setText(url);
+			Toast.makeText(getApplicationContext(), "Page address copied", Toast.LENGTH_SHORT).show();
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -158,11 +168,15 @@ public class Dashboard extends Activity {
 		}
 	}
 
-	// The methods of JavascriptInterface are called from javascript
+	// The methods of JavascriptInterface are called from javascript.
+	// The attributes are accessed from the Dashboard class.
+	// This is deliberately a dumb container class to stop possible
+	// security issues of javascript controlling Java app.
 	final class JavascriptInterface {
 		public boolean enablePreferencesMenu = false;
 		public boolean modalIsVisible = false;
 		public int versionCode = 0;
+		public String urlForSharing = null;
 
 		public void setEnablePreferencesMenu() {
 			enablePreferencesMenu = true;
@@ -176,6 +190,10 @@ public class Dashboard extends Activity {
 		// old app versions and prompt the user to upgrade.
 		public int getVersionCode() {
 			return versionCode;
+		}
+		
+		public void setUrlForSharing(String url) {
+			urlForSharing = url;
 		}
 	}
 
