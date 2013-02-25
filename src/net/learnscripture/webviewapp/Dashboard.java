@@ -18,9 +18,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
-@SuppressWarnings("deprecation")
 public class Dashboard extends Activity {
 
 	public String BASE_URL = "http://learnscripture.net/";
