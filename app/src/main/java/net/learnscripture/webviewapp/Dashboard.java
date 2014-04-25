@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.net.MailTo;
 import android.net.Uri;
@@ -12,12 +13,15 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.inputmethod.InputMethodManager;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
+
+import static android.content.res.Configuration.*;
 
 public class Dashboard extends Activity {
 
@@ -26,6 +30,7 @@ public class Dashboard extends Activity {
 	public String CONTACT_URL = BASE_URL + "contact/";
 
 	private JavascriptInterface jsInterface;
+	private View activeInput = null;
 
 	@SuppressLint("SetJavaScriptEnabled")
 	@Override
@@ -51,6 +56,7 @@ public class Dashboard extends Activity {
 		engine.setWebViewClient(new FixedWebViewClient() {
 			public void onPageStarted(WebView view, String url, Bitmap favicon)
 			{
+				activeInput = null;
 				jsInterface.enablePreferencesMenu  = false;
 				jsInterface.modalIsVisible = false;
 				jsInterface.urlForSharing = null;
@@ -63,7 +69,7 @@ public class Dashboard extends Activity {
 			}
 		});
 		engine.getSettings().setJavaScriptEnabled(true);
-		jsInterface = new JavascriptInterface();
+		jsInterface = new JavascriptInterface(this);
 		try {
 			ComponentName comp = new ComponentName(this, Dashboard.class);
 			PackageInfo pinfo = getPackageManager().getPackageInfo(comp.getPackageName(), 0);
@@ -77,6 +83,29 @@ public class Dashboard extends Activity {
 
 	private WebView getEngine() {
 		return (WebView) findViewById(R.id.web_engine);
+	}
+
+	private boolean isHardwareKeyboardAvailable() {
+		return getResources().getConfiguration().keyboard == KEYBOARD_QWERTY;
+	}
+
+	public void showKeyboard() {
+		if (isHardwareKeyboardAvailable()) {
+			return;
+		}
+
+		if (activeInput != null) {
+			InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+			imm.showSoftInput(activeInput, 0);
+		}
+	}
+
+	public void showMenu() {
+		this.openOptionsMenu();
+	}
+
+	public void registerInputFocused() {
+		activeInput = getCurrentFocus();
 	}
 
 	public void onBackPressed() {
@@ -178,6 +207,11 @@ public class Dashboard extends Activity {
 		public boolean modalIsVisible = false;
 		public int versionCode = 0;
 		public String urlForSharing = null;
+		private Dashboard dashboard;
+
+		public JavascriptInterface(Dashboard dashboard) {
+			this.dashboard = dashboard;
+		}
 
 		public void setEnablePreferencesMenu() {
 			enablePreferencesMenu = true;
@@ -195,6 +229,18 @@ public class Dashboard extends Activity {
 		
 		public void setUrlForSharing(String url) {
 			urlForSharing = url;
+		}
+
+		public void showKeyboard() {
+			this.dashboard.showKeyboard();
+		}
+
+		public void showMenu() {
+			this.dashboard.showMenu();
+		}
+
+		public void registerInputFocused() {
+			this.dashboard.registerInputFocused();
 		}
 	}
 
