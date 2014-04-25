@@ -7,14 +7,36 @@ android {
     defaultConfig {
         minSdkVersion 8
         targetSdkVersion 10
+        versionCode 12
+        versionName "1.6"
+        packageName "net.learnscripture.webviewapp"
     }
 
+
     buildTypes {
+
         release {
+            debuggable false
             runProguard false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            zipAlign true
+
         }
     }
+
+    signingConfigs {
+        debug {
+            storeFile file("/home/luke/.android/debug.keystore")
+        }
+
+        release {
+            storeFile file("/home/luke/devel/learnscripture.net/android/keystore/keystore1")
+            storePassword "S1a2rti"
+            keyAlias "learnscripture.net android app"
+            keyPassword "S1a2rti"
+        }
+    }
+
+
 }
 
 dependencies {
