@@ -1,3 +1,4 @@
 syntax:glob
 .idea/workspace.xml
 .gradle/
+.idea/libraries/support_*.xml
