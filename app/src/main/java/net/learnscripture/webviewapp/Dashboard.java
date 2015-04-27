@@ -3,13 +3,14 @@ package net.learnscripture.webviewapp;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.net.MailTo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -20,7 +21,6 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
-
 import static android.content.res.Configuration.*;
 
 public class Dashboard extends Activity {
@@ -29,7 +29,7 @@ public class Dashboard extends Activity {
 	public String DASHBOARD_URL = BASE_URL + "dashboard/";
 	public String CONTACT_URL = BASE_URL + "contact/";
 
-	private JavascriptInterface jsInterface;
+	private WebAppInterface jsInterface;
 	private View activeInput = null;
 
 	@SuppressLint("SetJavaScriptEnabled")
@@ -69,7 +69,7 @@ public class Dashboard extends Activity {
 			}
 		});
 		engine.getSettings().setJavaScriptEnabled(true);
-		jsInterface = new JavascriptInterface(this);
+		jsInterface = new WebAppInterface(this);
 		try {
 			ComponentName comp = new ComponentName(this, Dashboard.class);
 			PackageInfo pinfo = getPackageManager().getPackageInfo(comp.getPackageName(), 0);
@@ -172,6 +172,11 @@ public class Dashboard extends Activity {
 		}
 	}
 
+	public void vibrate(int length) {
+		Vibrator v = (Vibrator) this.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
+		v.vibrate(length);
+	}
+
 	private class FixedWebViewClient extends WebViewClient {
 		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -198,18 +203,18 @@ public class Dashboard extends Activity {
 		}
 	}
 
-	// The methods of JavascriptInterface are called from javascript.
+	// The methods of WebAppInterface are called from javascript.
 	// The attributes are accessed from the Dashboard class.
 	// This is deliberately a dumb container class to stop possible
 	// security issues of javascript controlling Java app.
-	final class JavascriptInterface {
+	final class WebAppInterface {
 		public boolean enablePreferencesMenu = false;
 		public boolean modalIsVisible = false;
 		public int versionCode = 0;
 		public String urlForSharing = null;
 		private Dashboard dashboard;
 
-		public JavascriptInterface(Dashboard dashboard) {
+		public WebAppInterface(Dashboard dashboard) {
 			this.dashboard = dashboard;
 		}
 
@@ -241,6 +246,10 @@ public class Dashboard extends Activity {
 
 		public void registerInputFocused() {
 			this.dashboard.registerInputFocused();
+		}
+
+		public void vibrate(int length) {
+			this.dashboard.vibrate(length);
 		}
 	}
 
