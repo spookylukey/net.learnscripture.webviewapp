@@ -9,7 +9,7 @@ android {
         targetSdkVersion 10
         versionCode 12
         versionName "1.6"
-        packageName "net.learnscripture.webviewapp"
+        applicationId "net.learnscripture.webviewapp"
     }
 
 
@@ -17,8 +17,7 @@ android {
 
         release {
             debuggable false
-            runProguard false
-            zipAlign true
+            zipAlignEnabled true
 
         }
     }
