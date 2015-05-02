@@ -2,14 +2,14 @@ apply plugin: 'android'
 
 android {
     compileSdkVersion 10
-    buildToolsVersion "19.0.3"
+    buildToolsVersion '19.1.0'
 
     defaultConfig {
         minSdkVersion 8
         targetSdkVersion 10
-        versionCode 12
-        versionName "1.6"
-        packageName "net.learnscripture.webviewapp"
+        versionCode 13
+        versionName "1.7"
+        applicationId "net.learnscripture.webviewapp"
     }
 
 
@@ -17,8 +17,7 @@ android {
 
         release {
             debuggable false
-            runProguard false
-            zipAlign true
+            zipAlignEnabled true
 
         }
     }
@@ -40,5 +39,7 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:+'
+    compile('com.android.support:support-v4:19.1.0'){
+        force = true
+    }
 }
